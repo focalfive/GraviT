@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		650117671CC90DCE008516E7 /* CalibrationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650117661CC90DCE008516E7 /* CalibrationViewController.swift */; };
+		6501179B1CC92546008516E7 /* progress@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6501179A1CC92546008516E7 /* progress@2x.png */; };
 		650282E01CBF53FD00B36DC8 /* MakeLineViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650282DF1CBF53FD00B36DC8 /* MakeLineViewController.swift */; };
 		650282E21CBFDFF700B36DC8 /* DrawLineViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650282E11CBFDFF700B36DC8 /* DrawLineViewController.swift */; };
 		654A66BC1CBDBB740057ED68 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654A66BB1CBDBB740057ED68 /* AppDelegate.swift */; };
@@ -39,6 +41,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		650117661CC90DCE008516E7 /* CalibrationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalibrationViewController.swift; sourceTree = "<group>"; };
+		6501179A1CC92546008516E7 /* progress@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "progress@2x.png"; sourceTree = "<group>"; };
 		650282DF1CBF53FD00B36DC8 /* MakeLineViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MakeLineViewController.swift; sourceTree = "<group>"; };
 		650282E11CBFDFF700B36DC8 /* DrawLineViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawLineViewController.swift; sourceTree = "<group>"; };
 		654A66B81CBDBB740057ED68 /* GraviT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GraviT.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -69,10 +73,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		650117981CC92546008516E7 /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				650117991CC92546008516E7 /* Images */,
+			);
+			path = Assets;
+			sourceTree = "<group>";
+		};
+		650117991CC92546008516E7 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				6501179A1CC92546008516E7 /* progress@2x.png */,
+			);
+			path = Images;
+			sourceTree = "<group>";
+		};
 		654A66AF1CBDBB740057ED68 = {
 			isa = PBXGroup;
 			children = (
-				65B801161CC37ECC003CD661 /* CoreLocation.framework */,
+				650117981CC92546008516E7 /* Assets */,
 				654A66D31CBDBBE00057ED68 /* Classes */,
 				654A66CD1CBDBBCE0057ED68 /* Libraries */,
 				654A66BA1CBDBB740057ED68 /* GraviT */,
@@ -102,6 +122,7 @@
 		654A66CD1CBDBBCE0057ED68 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				65B801161CC37ECC003CD661 /* CoreLocation.framework */,
 				654A66CE1CBDBBCE0057ED68 /* Realm */,
 			);
 			path = Libraries;
@@ -134,6 +155,7 @@
 				650282DF1CBF53FD00B36DC8 /* MakeLineViewController.swift */,
 				650282E11CBFDFF700B36DC8 /* DrawLineViewController.swift */,
 				65B801141CC36566003CD661 /* ExploreLineViewController.swift */,
+				650117661CC90DCE008516E7 /* CalibrationViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -214,6 +236,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				654A66C61CBDBB740057ED68 /* LaunchScreen.storyboard in Resources */,
+				6501179B1CC92546008516E7 /* progress@2x.png in Resources */,
 				654A66C31CBDBB740057ED68 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -226,6 +249,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				65B801151CC36566003CD661 /* ExploreLineViewController.swift in Sources */,
+				650117671CC90DCE008516E7 /* CalibrationViewController.swift in Sources */,
 				650282E21CBFDFF700B36DC8 /* DrawLineViewController.swift in Sources */,
 				654A66E11CBE8E260057ED68 /* LineCell.swift in Sources */,
 				654A66DF1CBE8AD50057ED68 /* MainNavigationController.swift in Sources */,

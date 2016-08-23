@@ -18,45 +18,39 @@ class DrawLineViewController: UIViewController, CLLocationManagerDelegate {
     var gyroContainer: UIView?
     var horizonFrontView = UIView()
     var horizonBackView = UIView()
-    var forceView = UIView()
+    var forceXView = UIView()
+    var forceYView = UIView()
     var horizonFrontLayer = CALayer()
     var horizonBackLayer = CALayer()
     var buttonPlay: UIButton?
     var buttonPause: UIButton?
     var labelAcceleration: UILabel = UILabel()
     var lineTitle = ""
-//    var locationFixAchieved = false
     var rotationX: CGFloat = 0.0
     var rotationZ: CGFloat = 0.0
-    var accelerationX: CGFloat = 0.0
-    var accelerationY: CGFloat = 0.0
-    var accelerationZ: CGFloat = 0.0
+    var accelerationX: Double = 0.0
+    var accelerationY: Double = 0.0
+    var accelerationZ: Double = 0.0
     var distanceAll = 0
     var horizonViewDistanceY: CGFloat = 0.0
     var timerAccelerationValueUpdate: NSTimer?
     let accelerationValueUpdateInterval: NSTimeInterval = 0.2
     var dots: [Dot] = []
     var location: (Double, Double)?
+    var count: UInt = 0
     
     
     var labelTrace: UILabel = UILabel()
     
     
-//    let frontColor = UIColor.init(red: 255 / 255, green: 202 / 255, blue: 42 / 255, alpha: 1.0)
-//    let frontColor = UIColor.init(red: 255 / 255, green: 185 / 255, blue: 36 / 255, alpha: 1.0)
-//    let frontColor = UIColor.init(red: 0 / 255, green: 125 / 255, blue: 196 / 255, alpha: 1.0)
     let frontColor = UIColor.blackColor().colorWithAlphaComponent(0.8)
-//    let backColor = UIColor.init(red: 19 / 255, green: 26 / 255, blue: 93 / 255, alpha: 1.0)
-//    let backColor = UIColor.init(red: 30 / 255, green: 30 / 255, blue: 35 / 255, alpha: 1.0)
     let backColor = UIColor.blackColor().colorWithAlphaComponent(0.5)
-//    let forceColor = UIColor.init(red: 223 / 255, green: 50 / 255, blue: 103 / 255, alpha: 1.0)
-    //    let forceColor = UIColor.init(red: 240 / 255, green: 17 / 255, blue: 83 / 255, alpha: 1.0)
-//    let forceColor = UIColor.init(red: 255 / 255, green: 0 / 255, blue: 0 / 255, alpha: 1.0)
-//    let forceColor = UIColor.blackColor().colorWithAlphaComponent(1)
-    let forceColor = UIColor.init(red: 236 / 255, green: 6 / 255, blue: 6 / 255, alpha: 1.0)
-//    let centerColor = UIColor.init(red: 255 / 255, green: 255 / 255, blue: 255 / 255, alpha: 0.1)
-//    var horizonViewRotation: CGFloat = 0.0
-//    var timer: NSTimer?
+    var colorLeft = UIColor.init(red: 0 / 255, green: 150 / 255, blue: 255 / 255, alpha: 1.0)
+    var colorRight = UIColor.init(red: 255 / 255, green: 0 / 255, blue: 102 / 255, alpha: 1.0)
+    var colorTop = UIColor.init(red: 77 / 255, green: 255 / 255, blue: 127 / 255, alpha: 1.0)
+    var colorBottom = UIColor.init(red: 255 / 255, green: 232 / 255, blue: 77 / 255, alpha: 1.0)
+    var forceXColor = UIColor.blackColor()
+    var forceYColor = UIColor.blackColor()
     
     var isRunning = false
     
@@ -89,11 +83,9 @@ class DrawLineViewController: UIViewController, CLLocationManagerDelegate {
         frame.origin.x = (viewSize.width - horizonWidth) * 0.5
         frame.origin.y = viewSize.height * 0.5
         
-//        self.horizonFrontView.layer.allowsEdgeAntialiasing = true
         self.horizonFrontView.frame = frame
         self.horizonFrontView.center = self.gyroContainer!.center
         
-//        self.horizonBackView.layer.allowsEdgeAntialiasing = true
         self.horizonBackView.frame = frame
         self.horizonBackView.center = self.gyroContainer!.center
         
@@ -113,10 +105,20 @@ class DrawLineViewController: UIViewController, CLLocationManagerDelegate {
         
         frame.size.width = 240
         frame.size.height = 240
-        self.forceView.frame = frame
-        self.forceView.backgroundColor = self.forceColor
-        self.forceView.layer.cornerRadius = 120
-        self.forceView.center = self.gyroContainer!.center
+        self.forceXView.frame = frame
+        self.forceXView.backgroundColor = self.forceXColor
+        self.forceXView.layer.cornerRadius = 120
+        self.forceXView.center = self.gyroContainer!.center
+        
+        self.forceYView.frame = frame
+        self.forceYView.backgroundColor = self.forceYColor
+        self.forceYView.layer.cornerRadius = 120
+        self.forceYView.center = self.gyroContainer!.center
+        
+        let centerView = UIView(frame: frame)
+        centerView.backgroundColor = UIColor.blackColor()
+        centerView.layer.cornerRadius = 120
+        centerView.center = self.gyroContainer!.center
         
         self.labelAcceleration.frame = frame
         self.labelAcceleration.textColor = UIColor.whiteColor()
@@ -125,39 +127,26 @@ class DrawLineViewController: UIViewController, CLLocationManagerDelegate {
         self.labelAcceleration.text = "0"
         self.labelAcceleration.center = self.gyroContainer!.center
         
-//        frame.size.width = 200
+//        // For debug trace
+//        frame.origin.x = 100.0
+//        frame.size.width = viewSize.width
 //        frame.size.height = 200
-//        let centerView = UIView(frame: frame)
-//        centerView.backgroundColor = self.centerColor
-//        centerView.layer.cornerRadius = 100
-//        centerView.center = self.gyroContainer!.center
-        
-        
-        
-        
-        // For debug trace
-        frame.origin.x = 100.0
-        frame.size.width = viewSize.width
-        frame.size.height = 200
-        frame.origin.y = viewSize.height - frame.size.height
-        
-        self.labelTrace.frame = frame
-        self.labelTrace.backgroundColor = UIColor.blackColor()
-        self.labelTrace.textColor = UIColor.greenColor()
-        self.labelTrace.font = UIFont(name: "AvenirNextCondensed-UltraLight", size: 16)
-        self.labelTrace.textAlignment = .Left
-        self.labelTrace.text = "..."
-        self.labelTrace.numberOfLines = 0
-        
-        
-        
+//        frame.origin.y = viewSize.height - frame.size.height
+//        
+//        self.labelTrace.frame = frame
+//        self.labelTrace.backgroundColor = UIColor.blackColor()
+//        self.labelTrace.textColor = UIColor.greenColor()
+//        self.labelTrace.font = UIFont(name: "AvenirNextCondensed-UltraLight", size: 16)
+//        self.labelTrace.textAlignment = .Left
+//        self.labelTrace.text = "..."
+//        self.labelTrace.numberOfLines = 0
         
         self.gyroContainer!.addSubview(self.horizonFrontView)
         self.gyroContainer!.addSubview(self.horizonBackView)
-        self.gyroContainer!.addSubview(self.forceView)
-//        self.gyroContainer!.addSubview(centerView)
+        self.gyroContainer!.addSubview(self.forceXView)
+        self.gyroContainer!.addSubview(self.forceYView)
+        self.gyroContainer!.addSubview(centerView)
         self.gyroContainer!.addSubview(self.labelAcceleration)
-        
         self.gyroContainer!.addSubview(self.labelTrace)
         
         // Play button
@@ -198,60 +187,56 @@ class DrawLineViewController: UIViewController, CLLocationManagerDelegate {
         self.locationManager = CLLocationManager()
     }
     
-    func trace(message: String) {
-        self.labelTrace.text = message
-    }
+//    func trace(message: String) {
+//        self.labelTrace.text = message
+//    }
     
     override func viewWillAppear(animated: Bool) {
-//        if self.isRunning && self.timer == nil {
-//            self.timer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: #selector(redrawGyroView), userInfo: nil, repeats: true)
-//        }
         if self.isRunning && self.timerAccelerationValueUpdate == nil {
             self.timerAccelerationValueUpdate = NSTimer.scheduledTimerWithTimeInterval(self.accelerationValueUpdateInterval, target: self, selector: #selector(updateAccelerationLabel), userInfo: nil, repeats: true)
         }
     }
 
     override func viewWillDisappear(animated: Bool) {
-//        self.timer?.invalidate()
-//        self.timer = nil
-        self.motionManager.stopAccelerometerUpdates()
+        self.motionManager.stopDeviceMotionUpdates()
         self.timerAccelerationValueUpdate?.invalidate()
         self.timerAccelerationValueUpdate = nil
     }
     
-    func redrawGyroView(dx distanceX: CGFloat, dy distanceY: CGFloat, dz distanceZ: CGFloat) {
-        let distaneHorizonY = CGFloat((CGFloat(M_PI * 0.5) - abs(self.rotationX)) * 50.0)
-        self.horizonViewDistanceY = self.horizonViewDistanceY + 0.3 * (distaneHorizonY - self.horizonViewDistanceY)
+    func redrawGyroView(dx distanceX: Double, dy distanceY: Double, dz distanceZ: Double) {
+        
+        self.horizonViewDistanceY = CGFloat((CGFloat(M_PI * 0.5) - abs(self.rotationX)) * 50.0)
         self.horizonFrontLayer.frame.origin.y = -self.horizonViewDistanceY
         self.horizonBackLayer.frame.origin.y = self.horizonViewDistanceY
         
         let transformRotation = CGAffineTransformMakeRotation(self.rotationZ)
-        let scale = 1.0 - distanceZ
+        let transformRotationLabel = CGAffineTransformMakeRotation(self.rotationZ + CGFloat(M_PI))
+        let scale = CGFloat(1.0 - distanceZ * 0.5)
         
+        let gravity = CGFloat(100.0)
         let transformScale = CGAffineTransformMakeScale(scale, scale)
-        var center = self.gyroContainer!.center
-        center.x += distanceX * 300
-        center.y -= distanceY * 300
+        var centerX = self.gyroContainer!.center
+        var centerY = centerX
+        centerX.x += CGFloat(distanceX) * gravity
+        centerY.y -= CGFloat(distanceY) * gravity
+        self.forceXColor = distanceX < 0.0 ? self.colorLeft : self.colorRight
+        self.forceYColor = distanceY > 0.0 ? self.colorTop : self.colorBottom
         
         self.distanceAll = Int((abs(distanceX) + abs(distanceY) + abs(distanceZ)) * 100)
         
         UIView.animateWithDuration(0.2) {
-            self.forceView.transform = transformScale
-            self.forceView.center = center
-        }
-        UIView.animateWithDuration(0.5) {
-            self.horizonFrontView.transform = transformRotation
-            self.horizonBackView.transform = transformRotation
+            self.forceXView.transform = transformScale
+            self.forceXView.center = centerX
+            self.forceXView.backgroundColor = self.forceXColor
+            self.forceYView.transform = transformScale
+            self.forceYView.center = centerY
+            self.forceYView.backgroundColor = self.forceYColor
         }
         
-//        let distaneHorizonY = CGFloat((CGFloat(M_PI) - abs(self.rotationX)) * 100.0)
-//        self.horizonViewDistanceY = self.horizonViewDistanceY + 0.1 * (distaneHorizonY - self.horizonViewDistanceY)
-//        print("redrawGyroView", distaneHorizonY, self.rotationX, self.rotationZ)
-//        let frontTransform = CGAffineTransformMake(cos(-self.rotationZ), -sin(-self.rotationZ), sin(-self.rotationZ), cos(-self.rotationZ), 0.0, -self.horizonViewDistanceY)
-//        let backTransform = CGAffineTransformMake(cos(-self.rotationZ), -sin(-self.rotationZ), sin(-self.rotationZ), cos(-self.rotationZ), 0.0, self.horizonViewDistanceY)
-//        UIView.animateWithDuration(0.2) {
-//            self.horizonFrontView.transform = frontTransform
-//            self.horizonBackView.transform = backTransform
+//        UIView.animateWithDuration(0.05) {
+            self.horizonFrontView.transform = transformRotation
+            self.horizonBackView.transform = transformRotation
+            self.labelAcceleration.transform = transformRotationLabel
 //        }
     }
     
@@ -261,18 +246,12 @@ class DrawLineViewController: UIViewController, CLLocationManagerDelegate {
     
     func startButtonDidSelect() {
         print("startButtonDidSelect")
+        
+        UIApplication.sharedApplication().idleTimerDisabled = true
+        
         self.isRunning = true
         self.buttonPlay!.hidden = self.isRunning
         self.gyroContainer!.hidden = !self.isRunning
-        
-//        let realm = try! Realm()
-//        
-//        let model = Line()
-//        model.title = (self.title)!
-        
-//        if self.timer == nil {
-//            self.timer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: #selector(redrawGyroView), userInfo: nil, repeats: true)
-//        }
         
         if self.isRunning && self.timerAccelerationValueUpdate == nil {
             self.timerAccelerationValueUpdate = NSTimer.scheduledTimerWithTimeInterval(self.accelerationValueUpdateInterval, target: self, selector: #selector(updateAccelerationLabel), userInfo: nil, repeats: true)
@@ -280,60 +259,125 @@ class DrawLineViewController: UIViewController, CLLocationManagerDelegate {
         
         // Gyro setting
         if self.motionManager.gyroAvailable {
-//            self.motionManager.gyroUpdateInterval = 0.25
+            let activeInterval = 0.05
+            let recordDivider: UInt = 20
+            let backgroundInterval = activeInterval * Double(recordDivider)
+//            self.motionManager.accelerometerUpdateInterval = 1.0
+            self.motionManager.deviceMotionUpdateInterval = activeInterval
             
-            self.motionManager.accelerometerUpdateInterval = 0.01
-//            self.motionManager.startGyroUpdates()
+            let queue = NSOperationQueue()//.mainQueue()
             
-            let queue = NSOperationQueue.mainQueue()
-            self.motionManager.startAccelerometerUpdatesToQueue(queue, withHandler: { (data: CMAccelerometerData?, error: NSError?) in
-                self.rotationX = CGFloat(-atan2(data!.acceleration.y, data!.acceleration.z))
-                self.rotationZ = CGFloat(atan2(data!.acceleration.x, data!.acceleration.y))
-                
-                let accelerationX = CGFloat((data?.acceleration.x)!)
-                let distanceX = accelerationX - self.accelerationX
-                self.accelerationX = accelerationX
-                
-                let accelerationY = CGFloat((data?.acceleration.y)!)
-                let distanceY = accelerationY - self.accelerationY
-                self.accelerationY = accelerationY
-                
-                let accelerationZ = CGFloat((data?.acceleration.z)!)
-                let distanceZ = accelerationZ - self.accelerationZ
-                self.accelerationZ = accelerationZ
-                
-                self.redrawGyroView(dx: distanceX, dy: distanceY, dz: distanceZ)
-                
-                let dot = Dot()
-                dot.vectorX = Float(accelerationX)
-                dot.vectorY = Float(accelerationY)
-                dot.vectorZ = Float(accelerationZ)
-                if self.location != nil {
-                    dot.latitude = self.location!.0
-                    dot.longitude = self.location!.1
+            self.motionManager.startDeviceMotionUpdatesToQueue(queue, withHandler: { (data: CMDeviceMotion?, error: NSError?) in
+                if let data: CMDeviceMotion = data {
+                    
+                    let appIsActive = UIApplication.sharedApplication().applicationState == .Active
+                    
+                    let accelerationX = data.userAcceleration.x
+                    let accelerationY = data.userAcceleration.y
+                    let accelerationZ = data.userAcceleration.z
+                    
+                    let distanceX = accelerationX - self.accelerationX
+                    self.accelerationX = accelerationX
+                    
+                    let distanceY = accelerationY - self.accelerationY
+                    self.accelerationY = accelerationY
+                    
+                    let distanceZ = accelerationZ - self.accelerationZ
+                    self.accelerationZ = accelerationZ
+                    
+                    if !appIsActive || self.count % recordDivider == 0 {
+                        
+                        let dot = Dot()
+                        dot.vectorX = Float(accelerationX)
+                        dot.vectorY = Float(accelerationY)
+                        dot.vectorZ = Float(accelerationZ)
+                        dot.date = NSDate()
+                        
+                        if self.location != nil {
+                            dot.latitude = self.location!.0
+                            dot.longitude = self.location!.1
+                        }
+                        
+                        self.dots.append(dot)
+//                        print("append dot: \(self.dots.count)")
+                    }
+                    self.count += 1
+                    
+                    
+                    
+                    if appIsActive {
+//                        self.motionManager.deviceMotionUpdateInterval = 0.01
+                        self.motionManager.deviceMotionUpdateInterval = activeInterval
+                        
+                        let gravityX = data.gravity.x
+                        let gravityY = data.gravity.y
+                        let gravityZ = data.gravity.z
+                        
+//                        let calibrationRotationX = NSUserDefaults.standardUserDefaults().doubleForKey("calibrationRotationX") ?? 0.0
+//                        let calibrationRotationZ = NSUserDefaults.standardUserDefaults().doubleForKey("calibrationRotationZ") ?? 0.0
+                        
+//                        self.rotationX = CGFloat(-(atan2(gravityY, gravityZ) - calibrationRotationX))
+//                        self.rotationZ = CGFloat(atan2(gravityX, gravityY) - calibrationRotationZ)
+                        self.rotationX = CGFloat(-atan2(gravityY, gravityZ))
+                        self.rotationZ = CGFloat(atan2(gravityX, gravityY))
+                        
+//                        print(atan2(gravityZ, gravityY))
+//                        print(gravityX, gravityY, gravityZ, )
+                        dispatch_async(dispatch_get_main_queue()){
+                            self.redrawGyroView(dx: distanceX, dy: distanceY, dz: distanceZ)
+                            var lat = 0.0
+                            var lang = 0.0
+                            if let location: (Double, Double) = self.location {
+                                lat = location.0
+                                lang = location.1
+                            }
+//                            self.trace("Lat: \(lat)\nLang: \(lang)\nx: \(accelerationX)\ny: \(accelerationY)\nz: \(accelerationZ)\nCount: \(self.dots.count)")
+                        }
+                    } else {
+//                        self.motionManager.deviceMotionUpdateInterval = 0.1
+                        self.motionManager.deviceMotionUpdateInterval = backgroundInterval
+                    }
                 }
-                
-                self.dots.append(dot)
-//                
-//                .53686
-//                .53696
-                self.trace("Lat: \(dot.latitude)\nLang: \(dot.longitude)\nx: \(dot.vectorX)\ny: \(dot.vectorY)\nz: \(dot.vectorZ)")
             })
         }
         
-        self.locationManager!.requestWhenInUseAuthorization();
-        if CLLocationManager.authorizationStatus() == .NotDetermined {
-            self.locationManager!.requestWhenInUseAuthorization()
+//        if CLLocationManager.authorizationStatus() == .NotDetermined {
+//            self.locationManager!.requestAlwaysAuthorization()
+//        }
+        
+        if #available(iOS 9.0, *) {
+            self.locationManager?.allowsBackgroundLocationUpdates = true
+        } else {
+            // Fallback on earlier versions
         }
-        if CLLocationManager.locationServicesEnabled() {
-            print("Location service enabled");
-            self.locationManager!.delegate = self
-            self.locationManager!.desiredAccuracy = kCLLocationAccuracyBest
+        
+        self.locationManager!.delegate = self
+        self.locationManager!.desiredAccuracy = kCLLocationAccuracyBest
+        
+        switch CLLocationManager.authorizationStatus() {
+        case .AuthorizedAlways:
+            print("AuthorizedAlways")
+//            self.locationManager!.startUpdatingHeading()
             self.locationManager!.startUpdatingLocation()
-            self.locationManager!.startUpdatingHeading()
-        }
-        else{
-            print("Location service disabled");
+        case .NotDetermined:
+            self.locationManager?.requestAlwaysAuthorization()
+        case .AuthorizedWhenInUse, .Restricted, .Denied:
+            let alertController = UIAlertController(
+                title: "Background Location Access Disabled",
+                message: "In order to be notified about adorable kittens near you, please open this app's settings and set location access to 'Always'.",
+                preferredStyle: .Alert)
+            
+            let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
+            alertController.addAction(cancelAction)
+            
+            let openAction = UIAlertAction(title: "Open Settings", style: .Default) { (action) in
+                if let url = NSURL(string:UIApplicationOpenSettingsURLString) {
+                    UIApplication.sharedApplication().openURL(url)
+                }
+            }
+            alertController.addAction(openAction)
+            
+            self.presentViewController(alertController, animated: true, completion: nil)
         }
     }
     
@@ -341,53 +385,32 @@ class DrawLineViewController: UIViewController, CLLocationManagerDelegate {
         print("locationManager didFailWithError")
     }
     
-    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        print("locationManager didUpdateLocations")
-//        if self.locationFixAchieved == false {
-//            self.locationFixAchieved = true
-            let location = locations.last
-            self.location = ((location?.coordinate.latitude)!, (location?.coordinate.longitude)!)
-            
-//            let lat = self.location?.0
-        
-//            print("Lat: \(self.location?.0) : \(lat)")
-//        }
+    func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+        if status == .AuthorizedAlways || status == .AuthorizedWhenInUse {
+//            self.locationManager!.startUpdatingHeading()
+            self.locationManager!.startUpdatingLocation()
+        }
     }
     
-    func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
-        print("locationManager didChangeAuthorizationStatus")
+    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        print("locationManager didUpdateLocations")
+        let location = locations.last
+        self.location = ((location?.coordinate.latitude)!, (location?.coordinate.longitude)!)
         
-        if status == .AuthorizedAlways || status == .AuthorizedWhenInUse {
-            manager.startUpdatingLocation()
-            // ...
-        }
-        
-        switch status {
-        case .NotDetermined:
-            print(".NotDetermined")
-            break
-            
-        case .AuthorizedAlways:
-            print(".AuthorizedAlways")
-            break
-            
-        case .Denied:
-            print(".Denied")
-            break
-            
-        case .AuthorizedWhenInUse:
-            print(".AuthorizedWhenInUse")
-            break
-            
-        case .Restricted:
-            print(".Restricted")
-            break
-            
-        default:
-            print("Unhandled authorization status")
-            break
-            
-        }
+//        if UIApplication.sharedApplication().applicationState != .Active {
+//            print("Background")
+//            self.motionManager.stopDeviceMotionUpdates()
+//            let queue = NSOperationQueue()
+//            self.motionManager.startDeviceMotionUpdatesToQueue(queue, withHandler: { (data: CMDeviceMotion?, error: NSError?) in
+//                if let data: CMDeviceMotion = data {
+//                    let gravityX = data.gravity.x
+//                    let gravityY = data.gravity.y
+//                    let gravityZ = data.gravity.z
+//                    
+//                    print(gravityX, gravityY, gravityZ)
+//                }
+//            })
+//        }
     }
     
     func stopButtonDidSelect() {
@@ -398,7 +421,6 @@ class DrawLineViewController: UIViewController, CLLocationManagerDelegate {
         let line = Line()
         line.title = self.lineTitle
         line.dots.appendContentsOf(self.dots)
-//        line.dots.append(self.dots[0])
         
         try! realm.write {
             realm.add(line)

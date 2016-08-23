@@ -15,9 +15,7 @@ class Dot: Object {
     dynamic var vectorX: Float = 0.0
     dynamic var vectorY: Float = 0.0
     dynamic var vectorZ: Float = 0.0
-    dynamic var rotateX: Float = 0.0
-    dynamic var rotateY: Float = 0.0
-    dynamic var rotateZ: Float = 0.0
+    dynamic var date: NSDate!
     
 }
 

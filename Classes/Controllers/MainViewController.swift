@@ -51,6 +51,21 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         buttonStart.addTarget(self, action: #selector(startButtonDidSelect), forControlEvents: .TouchUpInside)
         
         self.view.addSubview(buttonStart)
+        
+        
+        // Calibration button
+        frame.origin.x = buttonMargin
+        let buttonCalibration = UIButton(frame: frame)
+        buttonCalibration.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.8)
+        buttonCalibration.layer.cornerRadius = buttonSize * 0.5
+        buttonCalibration.titleLabel!.font = buttonTitleFont
+        let titleCalibration = NSMutableAttributedString(string: "Stable")
+        titleCalibration.addAttribute(NSKernAttributeName, value: CGFloat(-2.0), range: NSRange(location: 0, length: titleCalibration.length))
+        titleCalibration.addAttribute(NSForegroundColorAttributeName, value: UIColor.whiteColor(), range: NSRange(location: 0, length: titleCalibration.length))
+        buttonCalibration.setAttributedTitle(titleCalibration, forState: .Normal)
+        buttonCalibration.addTarget(self, action: #selector(stabilButtonDidSelect), forControlEvents: .TouchUpInside)
+        
+        self.view.addSubview(buttonCalibration)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -65,6 +80,11 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     func startButtonDidSelect() {
         print("startButtonDidSelect")
         self.navigationController?.pushViewController(MakeLineViewController(), animated: true)
+    }
+    
+    func stabilButtonDidSelect() {
+        print("stableButtonDidSelect")
+        self.navigationController?.pushViewController(CalibrationViewController(), animated: true)
     }
     
     // About table view
@@ -115,7 +135,7 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         print("Model title: \(model.title), objectId: \(model.id), dotCount: \(model.dots.count)")
         
-//        exploreLineViewController = model
+        exploreLineViewController.data = model
         self.navigationController?.pushViewController(exploreLineViewController, animated: true)
         
         return nil

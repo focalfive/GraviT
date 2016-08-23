@@ -10,6 +10,8 @@ import UIKit
 
 class ExploreLineViewController: UIViewController {
     
+    var data: Line! = nil
+    
     override func viewDidLoad() {
         
         self.view.backgroundColor = UIColor.whiteColor()
@@ -20,6 +22,7 @@ class ExploreLineViewController: UIViewController {
         var frame = CGRectZero
         
         let buttonTitleFont = UIFont(name: "AvenirNextCondensed-UltraLight", size: buttonSize * 0.5)
+        let labelFont = UIFont(name: "AvenirNextCondensed-UltraLight", size: 100)
         
         // Cancel button
         frame.origin.x = buttonMargin
@@ -38,6 +41,18 @@ class ExploreLineViewController: UIViewController {
         
         self.view.addSubview(buttonCancel)
         
+        frame.origin.x = 0
+        frame.origin.y = 100
+        frame.size.width = viewSize.width
+        frame.size.height = viewSize.height - 200
+        
+        let labelAcceleration = UILabel(frame: frame)
+        labelAcceleration.textColor = UIColor.blackColor()
+        labelAcceleration.font = labelFont
+        labelAcceleration.textAlignment = .Center
+        labelAcceleration.text = "\(self.data!.dots.count)"
+        
+        self.view.addSubview(labelAcceleration)
     }
     
     func cancelButtonDidSelect() {
